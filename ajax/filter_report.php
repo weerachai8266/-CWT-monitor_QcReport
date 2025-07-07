@@ -25,26 +25,26 @@ $stmt = $conn->prepare($sql);
 $stmt->execute($params);
 
 if ($stmt->rowCount()) {
-    echo '<table class="table table-bordered table-hover">
-        <thead class="table-info text-center">
+    echo '<table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-blue-100">
             <tr>
-                <th>วันที่</th>
-                <th>ชิ้นส่วน</th>
-                <th>ปัญหา</th>
-                <th>ล็อต</th>
-                <th>ไลน์ผลิต</th>
-                <th>จำนวน</th>
+                <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider rounded-tl-lg">วันที่</th>
+                <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ชิ้นส่วน</th>
+                <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ปัญหา</th>
+                <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ล็อต</th>
+                <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ไลน์ผลิต</th>
+                <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider rounded-tr-lg">จำนวน</th>
             </tr>
         </thead>
-        <tbody class="text-center">';
+        <tbody class="bg-white divide-y divide-gray-200">';
     foreach ($stmt as $row) {
-        echo "<tr>
-                <td>{$row['created_at']}</td>
-                <td>{$row['part']}</td>
-                <td>{$row['detail']}</td>
-                <td>{$row['lot']}</td>
-                <td>{$row['process']}</td>
-                <td>{$row['qty']}</td>
+        echo "<tr class='hover:bg-gray-50'>
+                <td class='px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center'>{$row['created_at']}</td>
+                <td class='px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center'>{$row['part']}</td>
+                <td class='px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center'>{$row['detail']}</td>
+                <td class='px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center'>{$row['lot']}</td>
+                <td class='px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center'>{$row['process']}</td>
+                <td class='px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center'>{$row['qty']}</td>
               </tr>";
     }
     echo '</tbody></table>';

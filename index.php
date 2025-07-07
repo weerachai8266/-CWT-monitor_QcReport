@@ -19,6 +19,38 @@ session_start();
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for Inter (preferred for modern UI) */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        /* Fallback to Poppins if Inter is not desired, but Inter is generally cleaner for UI */
+        /* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'); */
+
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter as the primary font */
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom scrollbar for table-responsive */
+        .overflow-x-auto::-webkit-scrollbar {
+            height: 8px;
+        }
+        .overflow-x-auto::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        .overflow-x-auto::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+    <!-- SweetAlert2 for notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery (kept for existing JS logic) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </head>
 <body class="bg-light">
@@ -102,104 +134,107 @@ session_start();
                     📋 รายงานของเสีย
                     </div>
                     <div class="card-body">
-                        <div class="row g-3">
-                            <table class="table table-bordered table-hover">
-                                <thead class="table-info text-center">
-                                    <tr>
-                                        <th>วันที่</th>
-                                        <th>ชิ้นส่วน</th>
-                                        <th>ปัญหา</th>
-                                        <th>ล็อต</th>
-                                        <th>ไลน์ผลิต</th>
-                                        <th>จำนวน</th>
-                                        <th>EDIT</th>
-                                    </tr>
-                                </thead>
+                        <div class="overflow-x-auto rounded-lg shadow-md">
+                            <div class="row g-3">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-blue-100">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider rounded-tl-lg">วันที่</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ชิ้นส่วน</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ปัญหา</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ล็อต</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ไลน์ผลิต</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">จำนวน</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">EDIT</th>
+                                        </tr>
+                                    </thead>
 
-                                <tbody class="text-center">
-                                <?php 
-                                    $stmt = $conn->query("SELECT * FROM qc_ng WHERE DATE(created_at) = CURDATE() ORDER BY id DESC");
-                                    // $total_license = $stmt->rowCount();
-                                    // $i = $total_license;                        
-                                    foreach ($stmt as $row): ?>
-                                <tr>                                    
-                                    <td><?= $row['created_at'] ?></td>
-                                    <td><?= $row['part'] ?></td>
-                                    <td><?= $row['detail'] ?></td>
-                                    <td><?= $row['lot'] ?></td>
-                                    <td><?= $row['process'] ?></td>
-                                    <td><?= $row['qty'] ?></td>
-                                    <td class="text-center">
-                                        <!-- ปุ่มแก้ไข -->
-                                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $row['id'] ?>">✏️</button>
-                                        <!-- ปุ่มลบ -->
-                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['id'] ?>">🗑️</button>
-                                    </td>
-                                </tr>
-                                <!-- Modal แก้ไข -->
-                                <div class="modal fade" id="editModal<?= $row['id'] ?>" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <form method="post" action="process/update_ng.php">
-                                                <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                                                <div class="modal-header bg-warning">
-                                                    <h5 class="modal-title">📝 แก้ไขข้อมูล</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <label class="form-label">ชิ้นส่วน</label>
-                                                    <input name="ng_part" class="form-control mb-2" value="<?= $row['part'] ?>" required>
-                                                    <label class="form-label">ปัญหา</label>
-                                                    <input name="ng_detail" class="form-control mb-2" value="<?= $row['detail'] ?>" required>
-                                                    <label class="form-label">ล็อต</label>
-                                                    <input name="ng_lot" class="form-control mb-2" value="<?= $row['lot'] ?>" required>
-                                                    <label class="form-label">ไลน์ผลิต</label>
-                                                    <select name="ng_line" class="form-select" required>
-                                                        <option value="<?= $row['process'] ?>" disabled selected><?= $row['process'] ?></option>
-                                                        <option value="F/C">F/C</option>
-                                                        <option value="F/B">F/B</option>
-                                                        <option value="R/C">R/C</option>
-                                                        <option value="R/B">R/B</option>
-                                                        <option value="3RD & ARM">3RD & ARM</option>
-                                                        <option value="SUB">SUB</option>
-                                                    </select>
-                                                    <label class="form-label">จำนวน</label>
-                                                    <input name="ng_qty" class="form-control mb-2" value="<?= $row['qty'] ?>" required>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-success">บันทึก</button>
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Modal ลบ -->
-                                <div class="modal fade" id="deleteModal<?= $row['id'] ?>" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <form method="post" action="process/delete_ng.php">
-                                                <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                                                    <div class="modal-header bg-danger text-white">
-                                                        <h5 class="modal-title">ยืนยันการลบ</h5>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                    <?php 
+                                        $stmt = $conn->query("SELECT * FROM qc_ng WHERE DATE(created_at) = CURDATE() ORDER BY id DESC");
+                                        // $total_license = $stmt->rowCount();
+                                        // $i = $total_license;                        
+                                        foreach ($stmt as $row): 
+                                    ?>
+                                    <tr class="hover:bg-gray-50">                                    
+                                        <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= $row['created_at'] ?></td>
+                                        <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= $row['part'] ?></td>
+                                        <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= $row['detail'] ?></td>
+                                        <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= $row['lot'] ?></td>
+                                        <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= $row['process'] ?></td>
+                                        <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= $row['qty'] ?></td>
+                                        <td class="px-6 py-2 whitespace-nowrap text-center text-sm font-medium">
+                                            <!-- ปุ่มแก้ไข -->
+                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $row['id'] ?>">✏️</button>
+                                            <!-- ปุ่มลบ -->
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['id'] ?>">🗑️</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Modal แก้ไข -->
+                                    <div class="modal fade" id="editModal<?= $row['id'] ?>" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post" action="process/update_ng.php">
+                                                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                                    <div class="modal-header bg-warning">
+                                                        <h5 class="modal-title">📝 แก้ไขข้อมูล</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
-                                                <div class="modal-body">
-                                                คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลวันที่  <strong><?= $row['created_at'] ?></strong> ?
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-danger">ลบข้อมูล</button>
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                                                </div>
-                                            </form>
+                                                    <div class="modal-body">
+                                                        <label class="form-label">ชิ้นส่วน</label>
+                                                        <input name="ng_part" class="form-control mb-2" value="<?= $row['part'] ?>" required>
+                                                        <label class="form-label">ปัญหา</label>
+                                                        <input name="ng_detail" class="form-control mb-2" value="<?= $row['detail'] ?>" required>
+                                                        <label class="form-label">ล็อต</label>
+                                                        <input name="ng_lot" class="form-control mb-2" value="<?= $row['lot'] ?>" required>
+                                                        <label class="form-label">ไลน์ผลิต</label>
+                                                        <select name="ng_line" class="form-select" required>
+                                                            <option value="<?= $row['process'] ?>" disabled selected><?= $row['process'] ?></option>
+                                                            <option value="F/C">F/C</option>
+                                                            <option value="F/B">F/B</option>
+                                                            <option value="R/C">R/C</option>
+                                                            <option value="R/B">R/B</option>
+                                                            <option value="3RD & ARM">3RD & ARM</option>
+                                                            <option value="SUB">SUB</option>
+                                                        </select>
+                                                        <label class="form-label">จำนวน</label>
+                                                        <input name="ng_qty" class="form-control mb-2" value="<?= $row['qty'] ?>" required>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-success">บันทึก</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <?php endforeach; ?>
-                                </tbody>
-                            </table>                                
+                                    <!-- Modal ลบ -->
+                                    <div class="modal fade" id="deleteModal<?= $row['id'] ?>" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post" action="process/delete_ng.php">
+                                                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                                        <div class="modal-header bg-danger text-white">
+                                                            <h5 class="modal-title">ยืนยันการลบ</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                    <div class="modal-body">
+                                                    คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลวันที่  <strong><?= $row['created_at'] ?></strong> ?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-danger">ลบข้อมูล</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>                                
+                            </div>
                         </div>
-                    </div>                    
+                    </div>
                 </div> <!-- End of Report Card -->
             </div> <!-- End of NG Tab -->
 
@@ -240,7 +275,7 @@ session_start();
                         </div>  <!-- End of Report Filter -->
 
                         <!-- ตารางผลลัพธ์ -->
-                        <div class="row g-3" id="report-table-container">
+                        <div class="overflow-x-auto rounded-lg shadow-md" id="report-table-container">
                             <div class="text-center text-muted">⏳ รอโหลดข้อมูล...</div>
                         </div>  <!-- End of Report Table Container -->
                        
@@ -269,7 +304,7 @@ session_start();
         formData.append("ng_line", line);
 
         const container = document.getElementById("report-table-container");
-        container.innerHTML = "<div class='text-center'>⏳ กำลังโหลดข้อมูล...</div>";
+        container.innerHTML = "<div class='overflow-x-auto rounded-lg shadow-md'>⏳ กำลังโหลดข้อมูล...</div>";
 
         fetch("ajax/filter_report.php", {
             method: "POST",
