@@ -30,14 +30,26 @@ $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
 // หัวตาราง
-$sheet->fromArray(['วันที่', 'ชิ้นส่วน', 'ปัญหา', 'ล็อตผลิต', 'ไลน์ผลิต', 'จำนวน'], NULL, 'A1');
+$sheet->fromArray(['DATE', 'ITEM','PART','COLOR', 'ISSUE', 'LOT', 'PROCESS', 'QTY'], NULL, 'A1');
 
 // เขียนข้อมูล
 $rowIndex = 2;
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    // เตรียมคำสั่ง SQL สำหรับดึง nickname และ color
+    $itemStmt = $conn->prepare("SELECT nickname, color FROM item WHERE item = :item LIMIT 1");
+    $itemStmt->execute([':item' => $row['part']]);
+    $itemData = $itemStmt->fetch(PDO::FETCH_ASSOC);
+
+    // ถ้าเจอข้อมูลใน item
+    $nickname = $itemData['nickname'] ?? '';
+    $color = $itemData['color'] ?? '';
+
+    // เขียนข้อมูลลง Excel
     $sheet->fromArray([
         $row['created_at'],
         $row['part'],
+        $nickname,
+        $color,
         $row['detail'],
         $row['lot'],
         $row['process'],

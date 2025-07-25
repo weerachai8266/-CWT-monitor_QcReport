@@ -16,11 +16,18 @@ session_start();
     <link rel="icon" href="img/favicon_circular.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- jQuery UI -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <!-- SweetAlert2 for notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         /* Custom font for Inter (preferred for modern UI) */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -47,10 +54,7 @@ session_start();
             background: #555;
         }
     </style>
-    <!-- SweetAlert2 for notifications -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- jQuery (kept for existing JS logic) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
 
 </head>
 <body class="bg-light">
@@ -62,20 +66,19 @@ session_start();
                 <!-- Chai Watana Tannery Group -->
             </h1>
             <div style="width: 60px;"></div>
-        <!-- </div> -->
 
-        <!-- แถบเมนู -->
-        <ul class="nav nav-pills" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="ng-tab" data-bs-toggle="tab" data-bs-target="#ng" type="button" role="tab">NG</button>
-            </li>
-            <!-- <li class="nav-item" role="presentation">
-                <button class="nav-link" id="man-tab" data-bs-toggle="tab" data-bs-target="#man" type="button" role="tab">Man Power</button>
-            </li> -->
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="report-tab" data-bs-toggle="tab" data-bs-target="#report" type="button" role="tab">Report</button>
-            </li>
-        </ul>
+            <!-- แถบเมนู -->
+            <ul class="nav nav-pills" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="ng-tab" data-bs-toggle="tab" data-bs-target="#ng" type="button" role="tab">NG</button>
+                </li>
+                <!-- <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="man-tab" data-bs-toggle="tab" data-bs-target="#man" type="button" role="tab">Man Power</button>
+                </li> -->
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="report-tab" data-bs-toggle="tab" data-bs-target="#report" type="button" role="tab">Report</button>
+                </li>
+            </ul>
         </div>
 
         <div class="tab-content mt-3" id="myTabContent">
@@ -90,15 +93,17 @@ session_start();
                         <form method="post" action="process/add_ng.php">
                             <div class="row g-3">
                                 <div class="col-md-2">
-                                    <label class="form-label">ชิ้นส่วน</label>
-                                    <input type="text" name="ng-part" class="form-control" required>
+                                    <label class="form-label">ITEM</label>
+                                    <!-- <input type="text" name="ng-part" class="form-control" required> -->
+                                    <input type="text" id="ng-part" name="ng-part" class="form-control" autocomplete="off" required>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">ปัญหา</label>
-                                    <input type="text" name="ng-detail" class="form-control" required>
+                                    <!-- <input type="text" name="ng-detail" class="form-control" required> -->
+                                    <input type="text" id="ng-detail" name="ng-detail" class="form-control" autocomplete="off" required>
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label">ล็อต</label>
+                                    <label class="form-label">LOT</label>
                                     <input type="text" name="ng-lot" class="form-control" required>
                                 </div>
                                 <div class="col-md-2">
@@ -110,7 +115,7 @@ session_start();
                                         <option value="F/B">F/B</option>
                                         <option value="R/C">R/C</option>
                                         <option value="R/B">R/B</option>
-                                        <option value="3RD & ARM">3RD & ARM</option>
+                                        <option value="3RD">3RD</option>
                                         <option value="SUB">SUB</option>
                                     </select>
                                 </div>
@@ -140,11 +145,11 @@ session_start();
                                     <thead class="bg-blue-100">
                                         <tr>
                                             <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider rounded-tl-lg">วันที่</th>
-                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ชิ้นส่วน</th>
-                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ปัญหา</th>
-                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ล็อต</th>
-                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ไลน์ผลิต</th>
-                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">จำนวน</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ITEM</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ISSUE</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">LOT</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">PROCESS</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">QTY</th>
                                             <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">EDIT</th>
                                         </tr>
                                     </thead>
@@ -181,23 +186,23 @@ session_start();
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <label class="form-label">ชิ้นส่วน</label>
-                                                        <input name="ng_part" class="form-control mb-2" value="<?= $row['part'] ?>" required>
-                                                        <label class="form-label">ปัญหา</label>
+                                                        <label class="form-label">ITEM</label>
+                                                        <input name="ng_part" class="form-control mb-2" disabled value="<?= $row['part'] ?>" required>
+                                                        <label class="form-label">ISSUE</label>
                                                         <input name="ng_detail" class="form-control mb-2" value="<?= $row['detail'] ?>" required>
-                                                        <label class="form-label">ล็อต</label>
+                                                        <label class="form-label">LOT</label>
                                                         <input name="ng_lot" class="form-control mb-2" value="<?= $row['lot'] ?>" required>
-                                                        <label class="form-label">ไลน์ผลิต</label>
+                                                        <label class="form-label">PROCESS</label>
                                                         <select name="ng_line" class="form-select" required>
                                                             <option value="<?= $row['process'] ?>" disabled selected><?= $row['process'] ?></option>
                                                             <option value="F/C">F/C</option>
                                                             <option value="F/B">F/B</option>
                                                             <option value="R/C">R/C</option>
                                                             <option value="R/B">R/B</option>
-                                                            <option value="3RD & ARM">3RD & ARM</option>
+                                                            <option value="3RD">3RD</option>
                                                             <option value="SUB">SUB</option>
                                                         </select>
-                                                        <label class="form-label">จำนวน</label>
+                                                        <label class="form-label">QTY</label>
                                                         <input name="ng_qty" class="form-control mb-2" value="<?= $row['qty'] ?>" required>
                                                     </div>
                                                     <div class="modal-footer">
@@ -256,14 +261,14 @@ session_start();
                             </div>
                             <div class="col-md-3">
                                 <div class="input-group mb-3">
-                                    <label class="input-group-text" for="ng_line">ไลน์ผลิต</label>
+                                    <label class="input-group-text" for="ng_line">PROCESS</label>
                                     <select class="form-select" id="ng_line">
                                         <option value="">ทั้งหมด</option>
                                         <option value="F/C">F/C</option>
                                         <option value="F/B">F/B</option>
                                         <option value="R/C">R/C</option>
                                         <option value="R/B">R/B</option>
-                                        <option value="3RD & ARM">3RD & ARM</option>
+                                        <option value="3RD">3RD</option>
                                         <option value="SUB">SUB</option>
                                     </select>
                                 </div>
@@ -287,40 +292,51 @@ session_start();
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    document.getElementById("btnFilter").addEventListener("click", function () {
-        const start = document.getElementById("report_date_start").value || '';
-        const end = document.getElementById("report_date_end").value || '';
-        const lineSelect = document.getElementById("ng_line");
-        const line = lineSelect ? lineSelect.value : '';
+        document.getElementById("btnFilter").addEventListener("click", function () {
+            const start = document.getElementById("report_date_start").value || '';
+            const end = document.getElementById("report_date_end").value || '';
+            const lineSelect = document.getElementById("ng_line");
+            const line = lineSelect ? lineSelect.value : '';
 
-        // Update export CSV link
-        const exportURL = `export/export_xlsx.php?date_start=${encodeURIComponent(start)}&date_end=${encodeURIComponent(end)}&ng_line=${encodeURIComponent(line)}`;
-        document.getElementById("btnExport").setAttribute("href", exportURL);
+            // Update export CSV link
+            const exportURL = `export/export_xlsx.php?date_start=${encodeURIComponent(start)}&date_end=${encodeURIComponent(end)}&ng_line=${encodeURIComponent(line)}`;
+            document.getElementById("btnExport").setAttribute("href", exportURL);
 
-        // AJAX fetch
-        const formData = new FormData();
-        formData.append("report_date_start", start);
-        formData.append("report_date_end", end);
-        formData.append("ng_line", line);
+            // AJAX fetch
+            const formData = new FormData();
+            formData.append("report_date_start", start);
+            formData.append("report_date_end", end);
+            formData.append("ng_line", line);
 
-        const container = document.getElementById("report-table-container");
-        container.innerHTML = "<div class='overflow-x-auto rounded-lg shadow-md'>⏳ กำลังโหลดข้อมูล...</div>";
+            const container = document.getElementById("report-table-container");
+            container.innerHTML = "<div class='overflow-x-auto rounded-lg shadow-md'>⏳ กำลังโหลดข้อมูล...</div>";
 
-        fetch("ajax/filter_report.php", {
-            method: "POST",
-            body: formData
-        })
-        .then(res => res.text())
-        .then(data => container.innerHTML = data)
-        .catch(err => container.innerHTML = "<div class='text-danger'>เกิดข้อผิดพลาดในการโหลดข้อมูล</div>");
-    });
+            fetch("ajax/filter_report.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.text())
+            .then(data => container.innerHTML = data)
+            .catch(err => container.innerHTML = "<div class='text-danger'>เกิดข้อผิดพลาดในการโหลดข้อมูล</div>");
+        });
 
-    // โหลดข้อมูลทันทีเมื่อเปิดแท็บ
-    document.getElementById("report-tab").addEventListener("click", () => {
-        document.getElementById("btnFilter").click();
-    });
+        // โหลดข้อมูลทันทีเมื่อเปิดแท็บ
+        document.getElementById("report-tab").addEventListener("click", () => {
+            document.getElementById("btnFilter").click();
+        });
+
+        // Autocomplete for ng-part and ng-detail
+        $(function () {
+            $("#ng-part").autocomplete({
+                source: "ajax/get_items.php",
+                minLength: 1
+            });
+
+            $("#ng-detail").autocomplete({
+                source: "ajax/get_ng_details.php",
+                minLength: 1
+            });
+        });
     </script>
-
-
 </body>
 </html>
