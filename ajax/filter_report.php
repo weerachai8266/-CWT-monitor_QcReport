@@ -30,6 +30,7 @@ if ($stmt->rowCount()) {
         <thead class="bg-blue-100">
             <tr>
                 <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider rounded-tl-lg">DATE</th>
+                <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">MODEL</th>
                 <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ITEM</th>
                 <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">PART</th>
                 <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">COLOR</th>
@@ -43,16 +44,18 @@ if ($stmt->rowCount()) {
         
     foreach ($stmt as $row) {
         // เตรียมคำสั่ง SQL สำหรับดึง nickname และ color
-        $itemStmt = $conn->prepare("SELECT nickname, color FROM item WHERE item = :item LIMIT 1");
+        $itemStmt = $conn->prepare("SELECT model, nickname, color FROM item WHERE item = :item LIMIT 1");
         $itemStmt->execute([':item' => $row['part']]);
         $itemData = $itemStmt->fetch(PDO::FETCH_ASSOC);
 
         // ถ้าเจอข้อมูลใน item
+        $model = $itemData['model'] ?? '';
         $nickname = $itemData['nickname'] ?? '';
         $color = $itemData['color'] ?? '';
         
         echo "<tr class='hover:bg-gray-50'>
-                <td class='px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center'>{$row['created_at']}</td>
+                <td class='px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center'>" . date('Y-m-d', strtotime($row['created_at'])) . "</td>
+                <td class='px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center'>$model</td>
                 <td class='px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center'>{$row['part']}</td>
                 <td class='px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center'>$nickname</td>
                 <td class='px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center'>$color</td>

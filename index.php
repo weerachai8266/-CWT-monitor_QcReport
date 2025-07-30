@@ -162,7 +162,7 @@ session_start();
                                         foreach ($stmt as $row): 
                                     ?>
                                     <tr class="hover:bg-gray-50">                                    
-                                        <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= $row['created_at'] ?></td>
+                                        <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= date('Y-m-d', strtotime($row['created_at'])) ?></td>
                                         <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= $row['part'] ?></td>
                                         <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= $row['detail'] ?></td>
                                         <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= $row['lot'] ?></td>
