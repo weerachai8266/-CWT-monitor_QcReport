@@ -4,6 +4,15 @@ error_reporting(E_ALL);
 include 'connect.php'; // เชื่อมต่อฐานข้อมูล
 session_start();
 
+// ดึงรายการไลน์ของเสียจากตาราง
+try {
+    $stmt = $conn->prepare("SELECT issue FROM qc_issue ORDER BY id ASC");
+    $stmt->execute();
+    $issues = $stmt->fetchAll(PDO::FETCH_COLUMN);
+} catch (PDOException $e) {
+    $issues = [];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -72,11 +81,11 @@ session_start();
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="ng-tab" data-bs-toggle="tab" data-bs-target="#ng" type="button" role="tab">NG</button>
                 </li>
-                <!-- <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="man-tab" data-bs-toggle="tab" data-bs-target="#man" type="button" role="tab">Man Power</button>
-                </li> -->
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="report-tab" data-bs-toggle="tab" data-bs-target="#report" type="button" role="tab">Report</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="issue-tab" data-bs-toggle="tab" data-bs-target="#issue" type="button" role="tab">ISSUE</button>
                 </li>
             </ul>
         </div>
@@ -100,7 +109,14 @@ session_start();
                                 <div class="col-md-4">
                                     <label class="form-label">ปัญหา</label>
                                     <!-- <input type="text" name="ng-detail" class="form-control" required> -->
-                                    <input type="text" id="ng-detail" name="ng-detail" class="form-control" autocomplete="off" required>
+                                    <!-- <input type="text" id="ng-detail" name="ng-detail" class="form-control" autocomplete="off" required> -->
+                                    <select class="form-select" name="ng-detail" required>
+                                        <option value="" disabled selected>ทั้งหมด</option>
+                                        <?php foreach ($issues as $ng_detail): ?>
+                                            <option value="<?= htmlspecialchars($ng_detail) ?>"><?= htmlspecialchars($ng_detail) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label">LOT</label>
@@ -282,11 +298,116 @@ session_start();
                         <!-- ตารางผลลัพธ์ -->
                         <div class="overflow-x-auto rounded-lg shadow-md" id="report-table-container">
                             <div class="text-center text-muted">⏳ รอโหลดข้อมูล...</div>
-                        </div>  <!-- End of Report Table Container -->
-                       
+                        </div>  <!-- End of Report Table Container -->                        
                     </div>
                 </div> <!-- End of Report Card -->
             </div> <!-- End of Report Tab -->
+
+            <!-- ISSUE -->
+            <div class="tab-pane fade" id="issue" role="tabpanel">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-danger text-white">
+                    ⚠️ บันทึกของเสีย
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="process/add_issue.php">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label">ปัญหา</label>
+                                    <input type="text" name="issue-detail" class="form-control" required>
+                                </div>
+                                <div class="col-12 text-end">
+                                    <button type="submit" class="btn btn-danger mt-3">💾 บันทึกข้อมูล</button>
+                                </div>                                
+                            </div>
+                        </form>      
+                    </div>                    
+                </div>
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-danger text-white">
+                    📋 รายงานของเสีย
+                    </div>
+                    <div class="card-body">
+                        <div class="overflow-x-auto rounded-lg shadow-md">
+                            <div class="row g-3">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-blue-100">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider rounded-tl-lg">วันที่</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">ISSUE</th>
+                                            <th scope="col" class="px-6 py-2 text-center text-sm font-bold text-gray-700 uppercase tracking-wider">EDIT</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                    <?php 
+                                        $stmt = $conn->query("SELECT * FROM qc_issue WHERE DATE(created_at) = CURDATE() ORDER BY id DESC");
+                                        // $total_license = $stmt->rowCount();
+                                        // $i = $total_license;                        
+                                        foreach ($stmt as $row): 
+                                    ?>
+                                    <tr class="hover:bg-gray-50">                                    
+                                        <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= date('Y-m-d', strtotime($row['created_at'])) ?></td>
+                                        <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-900 text-center"><?= $row['issue'] ?></td>
+                                        <td class="px-6 py-2 whitespace-nowrap text-center text-sm font-medium">
+                                            <!-- ปุ่มแก้ไข -->
+                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?= $row['id'] ?>">✏️</button>
+                                            <!-- ปุ่มลบ -->
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $row['id'] ?>">🗑️</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Modal แก้ไข -->
+                                    <div class="modal fade" id="editModal<?= $row['id'] ?>" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post" action="process/update_issue.php">
+                                                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                                    <div class="modal-header bg-warning">
+                                                        <h5 class="modal-title">📝 แก้ไขข้อมูล</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <label class="form-label">ISSUE</label>
+                                                        <input name="issue" class="form-control mb-2" value="<?= $row['issue'] ?>" required>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-success">บันทึก</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Modal ลบ -->
+                                    <div class="modal fade" id="deleteModal<?= $row['id'] ?>" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post" action="process/delete_issue.php">
+                                                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                                        <div class="modal-header bg-danger text-white">
+                                                            <h5 class="modal-title">ยืนยันการลบ</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                    <div class="modal-body">
+                                                    คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลวันที่  <strong><?= $row['created_at'] ?></strong> ?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-danger">ลบข้อมูล</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>                                
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>  <!-- ISSUE -->
+
         </div> <!-- End of Tab Content -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
